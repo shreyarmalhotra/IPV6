@@ -97,8 +97,8 @@ def index():
     user = request.form['nm']
     addresses = user.split(',')
     valid = True
-    for address in addresses:
-        output_stream = os.popen("nslookup " + address)
+    for addr in addresses:
+        output_stream = os.popen("nslookup " + addr)
         server_address = output_stream.read()
         if 'Name' not in server_address:
             valid = False

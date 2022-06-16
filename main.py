@@ -69,7 +69,7 @@ def pingable(address):
         can_ping = True
     else:
         can_ping = False
-    return can_ping
+    return [can_ping]
 
 
 def check_ports(address):
@@ -99,7 +99,7 @@ def threadForSingleAddress(ip_address):
     hostname, output_address = getNameAndAddress(ip_address)
 
     # check if IP is pingable
-    can_ping = pingable(ip_address)
+    can_ping = pingable(ip_address)[0]
 
     # check if port is open
     open_ports = []
