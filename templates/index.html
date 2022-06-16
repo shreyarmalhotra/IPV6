@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+  background-image: url('https://wallpapercave.com/wp/STvuGy5.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+input[type=submit] {
+  background-color: #3CBC8D;
+  color: white;
+ }
+
+</style>
+<body>
+    <form action = "http://127.0.0.6:3000/index" method = "POST">
+        <center>
+            <font color="white">
+                <img src="https://www.complaintsboard.com/img/business/103950/900x900/adp.png" width="200" height="200">
+            <h1>IP Operator</h1>
+            <p>Enter IP address or hostname whose details you want to fetchh:</p>
+            <p><input type = "text" name = "nm" /></p>
+                <p> {{ error }} </p>
+            <p>Note: If you would like to enter multiple addresses, please separate them by a comma ','</p>
+            <p><input type = "submit" name = "all" value = "Get All Info" class="btn btn-primary" /></p>
+            <p><input type = "submit" name = "addr" value = "IP Address / Hostname" /></p>
+            <p><input type = "submit" name = "ping" value = "Pingable?" /></p>
+            <p><input type = "submit" name = "port" value = "Open Ports" /></p>
+                <br>
+                <p>Created by Shreya Malhotra and Matthew Cheng - Summer Intern 2022</p>
+            </font>
+        </center>
+	</form>
+</body>
+</html>
