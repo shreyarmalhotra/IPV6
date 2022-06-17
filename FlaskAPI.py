@@ -15,13 +15,14 @@ def success(name):
     ip address, hostname, pingability, open ports.
     :return: rendered info.html file specific for "Get All Info" button
     """
-    names = name.split(',')
+    name = name.split(',')
+    name = list(map(str.strip, name))
     global value
-    value = main.multi_thread(names, main.threadForSingleAddress)
+    value = main.multi_thread(name, main.threadForSingleAddress)
     kind = "Find All Info"
     global columns
     columns = ['Input', 'IP Address', 'Hostname', 'Pingable', 'Open Ports']
-    return render_template('info.html', name=names, value=value, kind=kind, iterate=range(len(names)), columns=columns)
+    return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
 
 @app.route('/ip_address_and_hostname/<name>')
@@ -32,13 +33,14 @@ def address(name):
     valid input.
     :return: rendered info.html file specific for "IP Address / Hostname" button
     """
-    names = name.split(',')
+    name = name.split(',')
+    name = list(map(str.strip, name))
     global value
-    value = main.multi_thread(names, main.getNameAndAddress)
+    value = main.multi_thread(name, main.getNameAndAddress)
     kind = 'IP Address and Hostname Lookup'
     global columns
-    columns = ['Input', 'IP Address', 'Hostname']
-    return render_template('info.html', name=names, value=value, kind=kind, iterate=range(len(names)), columns=columns)
+    columns = ['Input', 'Hostname', 'IP Address']
+    return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
 
 @app.route('/pingable/<name>')
@@ -49,13 +51,14 @@ def do_ping(name):
     is pingable.
     :return: rendered info.html file specific for "Pingable?" button
     """
-    names = name.split(',')
+    name = name.split(',')
+    name = list(map(str.strip, name))
     global value
-    value = main.multi_thread(names, main.pingable)
+    value = main.multi_thread(name, main.pingable)
     kind = 'Check Pingability'
     global columns
     columns = ['Input', 'Pingable']
-    return render_template('info.html', name=names, value=value, kind=kind, iterate=range(len(names)), columns=columns)
+    return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
 
 @app.route('/open_ports/<name>')
@@ -66,19 +69,20 @@ def ports(name):
     the given input, assuming the host is pingable.
     :return: rendered info.html file specific for "Open Ports" button
     """
-    names = name.split(',')
+    name = name.split(',')
+    name = list(map(str.strip, name))
     global value
-    value = main.multi_thread(names, main.check_ports)
+    value = main.multi_thread(name, main.check_ports)
     kind = 'Check Open Ports'
     global columns
     columns = ['Input', 'Open Ports']
-    return render_template('info.html', name=names, value=value, kind=kind, iterate=range(len(names)), columns=columns)
+    return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
 
 @app.route('/')
 def load_index():
     """
-    Upon visiting http://126.0.0.1:3000, this will
+    Upon visiting http://127.0.0.1:5000, this will
     render index.html without any error messages.
 
     :return: rendered index.html file for render
@@ -89,7 +93,7 @@ def load_index():
 @app.route('/index', methods=['POST'])
 def index():
     """
-    When http://127.0.0.6:3000/index is visited, the user may input an ip address or hostname.
+    When http://127.0.0.1:5000/index is visited, the user may input an ip address or hostname.
     Upon pressing one of the four buttons, this function will receive the inputted information
     and then redirect the user to the appropriate URL.
     :return: URL for redirecting
@@ -98,6 +102,7 @@ def index():
     addresses = user.split(',')
     valid = True
     for addr in addresses:
+        addr = addr.strip()
         output_stream = os.popen("nslookup " + addr)
         server_address = output_stream.read()
         if 'Name' not in server_address:

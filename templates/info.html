@@ -8,47 +8,47 @@
             display: none;
         }
         body {
-              background-image: url('https://wallpapercave.com/wp/STvuGy5.jpg');
-              background-repeat: no-repeat;
-              background-attachment: fixed;
-              background-size: cover;
-            }
-
-       input[type=submit] {
-          background-color: #3CBC8D;
-          color: white;
+            background-image: url('https://wallpapercave.com/wp/STvuGy5.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        input[type=submit] {
+            background-color: #3CDC8D;
+            color: white;
         }
     </style>
 </head>
 <body>
     <center>
         <font color="white">
-    <table border=1>
-         <h1>IP Operator</h1>
-        <tr>
-            {% for col in columns %}
-                <th> {{ col }} </th>
-            {% endfor %}
-        </tr>
-        {% for i in iterate %}
-        <tr>
-            <td> {{ name[i] }} </td>
-            {% for val in value[i] %}
-            <td> {{ val }} </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
+            <table border=1>
+                <tr>
+                    {% for col in columns %}
+                        <th> {{ col }} </th>
+                    {% endfor %}
+                </tr>
+                {% for i in iterate %}
+                <tr>
+                    <td> {{ name[i] }} </td>
+                    {% for val in value[i] %}
+                    <td> {{ val }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
 
-    <form action = "http://127.0.0.6:3000/receiver" method = "POST">
-        <p id="hide"><input type = "hidden" name = "values" /> {{ value }} </p>
-        <p><input type = "submit" name = "csv" value = "Download CSV" /></p>
-        <p><input type = "submit" name = "json" value = "Download json" /></p>
-    </form>
+            <form action = "http://127.0.0.6:3000/receiver" method = "POST">
+                <p id="hide"><input type = "hidden" name = "values" /> {{ value }} </p>
+
+                <p><input type = "submit" name = "csv" value = "Download csv" /></p>
+                <p><input type = "submit" name = "json" value = "Download json" /></p>
+            </form>
+
                 <br>
-<p>Created by Shreya Malhotra and Matthew Cheng - Summer Intern 2022</p>
+                <p> Created by Shreya Malhotra and Matthew Cheng - Summer Interns 2022</p>
+
         </font>
     </center>
-
 </body>
 </html>
