@@ -1,8 +1,11 @@
-import os
 import socket
 import csv
+import dns.resolver
 from multiprocessing.dummy import Pool
 from multiprocessing import cpu_count
+import subprocess
+import platform
+
 
 list_of_ports = [22, 80, 443, 5000, 7878, 8080]
 
@@ -22,6 +25,7 @@ ip_address_list = ["dc1prnsrvgr0001.es.ad.adp.com",
 def multi_thread(address_list, input_function):
     """
     This function takes advantage of multi-threading and runs the input_function on each item in the address_list.
+
     :param address_list: A list of addresses (host name or ip address)
     :param input_function: A function to be run over each address
     :return: A list of output from the input_function
@@ -37,39 +41,37 @@ def multi_thread(address_list, input_function):
 def getNameAndAddress(ip_address):
     """
     Given a host name or ip address, returns both host name and ip address
+
     :param ip_address: Host name or ip address for nslookup
     :return: Host name, ip address
     """
-    output_stream = os.popen("nslookup " + ip_address)
-    server_address = output_stream.read()
-
-    if 'Name' not in server_address:
-        hostname = "No Connection / Does Not Exist"
-        output_address = ip_address
-
+    if socket.gethostbyname(ip_address) == ip_address:
+        (hostname,aliases,output_address) = socket.gethostbyaddr(ip_address)
     else:
-        if 'Addresses' in server_address:
-            substring = server_address.split('Name:')[1].split("Addresses:")
-        else:
-            substring = server_address.split('Name:')[1].split("Address:")
-        hostname = substring[0].strip().split()
-        output_address = substring[1].strip().split()
-    return ','.join(hostname), ','.join(output_address)
+        hostname = ip_address
+        output_address = []
+        resolver = dns.resolver.Resolver()
+        result = resolver.resolve(hostname)
+        for res in result:
+            output_address.append(str(res))
+    return ','.join([hostname]), ','.join(output_address)
 
 
 def pingable(address):
     """
     Checks to see if the given address is pingable.
+
     :param address: Host name or ip address
     :return: True if pingable, false if not
     """
-    output_stream = os.popen("ping " + address)
-    ping_output = output_stream.read()
-    if "Reply from" in ping_output:
-        can_ping = True
-    else:
-        can_ping = False
-    return [can_ping]
+    def pingOk(sHost):
+        try:
+            output = subprocess.check_output(
+                "ping -{} 1 {}".format('n' if platform.system().lower() == "windows" else 'c', sHost), shell=True)
+        except:
+            return [False]
+        return [True]
+    return pingOk(address)
 
 
 def check_ports(address):
