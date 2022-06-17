@@ -157,7 +157,6 @@ def download_csv():
     response.mimetype = 'text/csv'
     return response
 
-
 @app.route('/json')
 def download_json():
     """
@@ -174,4 +173,4 @@ def download_json():
 
 if __name__ == '__main__':
     # run the Flask App
-    app.run(host='127.0.0.6', port=3000)
+    app.run(host='127.0.0.6', port=5000)
