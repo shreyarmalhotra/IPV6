@@ -4,7 +4,6 @@ import dns.resolver
 from multiprocessing.dummy import Pool
 from multiprocessing import cpu_count
 import subprocess
-import platform
 
 
 list_of_ports = [22, 80, 443, 5000, 7878, 8080]
@@ -25,7 +24,6 @@ ip_address_list = ["dc1prnsrvgr0001.es.ad.adp.com",
 def multi_thread(address_list, input_function):
     """
     This function takes advantage of multi-threading and runs the input_function on each item in the address_list.
-
     :param address_list: A list of addresses (host name or ip address)
     :param input_function: A function to be run over each address
     :return: A list of output from the input_function
@@ -41,7 +39,6 @@ def multi_thread(address_list, input_function):
 def getNameAndAddress(ip_address):
     """
     Given a host name or ip address, returns both host name and ip address
-
     :param ip_address: Host name or ip address for nslookup
     :return: Host name, ip address
     """
@@ -60,18 +57,17 @@ def getNameAndAddress(ip_address):
 def pingable(address):
     """
     Checks to see if the given address is pingable.
-
     :param address: Host name or ip address
     :return: True if pingable, false if not
     """
-    def pingOk(sHost):
+    try:
+        subprocess.check_output("ping -c 1 " + address, shell=True)
+    except:
         try:
-            output = subprocess.check_output(
-                "ping -{} 1 {}".format('n' if platform.system().lower() == "windows" else 'c', sHost), shell=True)
+            subprocess.check_output("ping -n 1 " + address, shell=True)
         except:
             return [False]
-        return [True]
-    return pingOk(address)
+    return [True]
 
 
 def check_ports(address):
