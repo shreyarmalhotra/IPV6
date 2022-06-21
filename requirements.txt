@@ -13,3 +13,4 @@ six==1.16.0
 Werkzeug==2.1.2
 zipp==3.8.0
 dnspython~=2.2.1
+icmplib~=3.0.3

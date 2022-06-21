@@ -1,5 +1,9 @@
-import os
+import sqlite3
 import socket
+import sqlite3
+
+
+
 
 import main
 import pandas as pd
@@ -7,9 +11,12 @@ from flask import Flask, redirect, url_for, request, jsonify, render_template, m
 
 # create the Flask application
 app = Flask(__name__)
+conn = sqlite3.connect("database.db",check_same_thread=False)
+curr = conn.cursor()
 
 '''
 '''
+
 
 
 @app.route('/all_info/<name>')
@@ -27,6 +34,15 @@ def success(name):
     kind = "Find All Info"
     global columns
     columns = ['Input', 'IP Address', 'Hostname', 'Pingable', 'Open Ports']
+    count=len(value)
+    for i in range(count):
+        print(i)
+        addData = f"INSERT INTO IPDATA VALUES('{value[i][1]}', '{value[i][2]}', '{value[i][3]}');"
+        print("check1")
+        curr.execute(addData)
+    print("check 2")
+    conn.commit()
+    print("chec3")
     return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
 
@@ -179,4 +195,4 @@ def download_json():
 
 if __name__ == '__main__':
     # run the Flask App
-    app.run(host='127.0.0.6', port=5000)
+    app.run(host='127.0.0.8', port=5000)
