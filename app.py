@@ -1,10 +1,6 @@
-import sqlite3
+
 import socket
 import sqlite3
-
-
-
-
 import main
 import pandas as pd
 from flask import Flask, redirect, url_for, request, jsonify, render_template, make_response
@@ -14,10 +10,30 @@ app = Flask(__name__)
 conn = sqlite3.connect("database.db",check_same_thread=False)
 curr = conn.cursor()
 
-'''
-'''
+@app.route('/')
+def api_call():
+    return render_template('api_call.html')
 
 
+@app.route('/call_all_info/<name>')
+def call_all_info(name):
+    """
+    Once "Get All Info" has been selected, this function redirects
+    the user to a webpage that displays all of the requested information,
+    ip address, hostname, pingability, open ports.
+    :return: rendered info.html file specific for "Get All Info" button
+    """
+    name = name.split(',')
+    name = list(map(str.strip, name))
+    global value
+    value = main.multi_thread(name, main.threadForSingleAddress)
+    global columns
+    columns = ['Input','IP Address','Hostname','Pingable','Open Ports']
+    response = make_response(jsonify(make_df().to_json()))
+    #cd = 'attachment; filename=download.json'
+    #response.headers['Content-Disposition'] = cd
+    #response.mimetype = 'text/json'
+    return response
 
 @app.route('/all_info/<name>')
 def success(name):
@@ -33,19 +49,33 @@ def success(name):
     value = main.multi_thread(name, main.threadForSingleAddress)
     kind = "Find All Info"
     global columns
-    columns = ['Input', 'IP Address', 'Hostname', 'Pingable', 'Open Ports']
-    count=len(value)
-    for i in range(count):
+    columns = ['Input','IP Address','Hostname','Pingable','Open Ports']
+    for i in range(len(value)):
         print(i)
         addData = f"INSERT INTO IPDATA VALUES('{value[i][1]}', '{value[i][2]}', '{value[i][3]}');"
-        print("check1")
         curr.execute(addData)
-    print("check 2")
     conn.commit()
-    print("chec3")
     return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
-#test
+
+
+@app.route('/open_ports/<name>')
+def ports(name):
+    """
+    Once "Open Ports" has been selected, this function redirects
+    the user to a webpage that displays all of the open ports for
+    the given input, assuming the host is pingable.
+    :return: rendered info.html file specific for "Open Ports" button
+    """
+    name = name.split(',')
+    name = list(map(str.strip, name))
+    global value
+    value = main.multi_thread(name, main.check_ports)
+    kind = 'Check Open Ports'
+    global columns
+    columns = ['Input', 'Open Ports']
+    return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
+
 
 @app.route('/ip_address_and_hostname/<name>')
 def address(name):
@@ -83,24 +113,6 @@ def do_ping(name):
     return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
 
-@app.route('/open_ports/<name>')
-def ports(name):
-    """
-    Once "Open Ports" has been selected, this function redirects
-    the user to a webpage that displays all of the open ports for
-    the given input, assuming the host is pingable.
-    :return: rendered info.html file specific for "Open Ports" button
-    """
-    name = name.split(',')
-    name = list(map(str.strip, name))
-    global value
-    value = main.multi_thread(name, main.check_ports)
-    kind = 'Check Open Ports'
-    global columns
-    columns = ['Input', 'Open Ports']
-    return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
-
-
 @app.route('/')
 def load_index():
     """
@@ -109,6 +121,9 @@ def load_index():
 
     :return: rendered index.html file for render
     """
+
+
+
     return render_template('index.html', error='')
 
 
@@ -129,6 +144,8 @@ def index():
             socket.gethostbyaddr(addr)
         except:
             valid = False
+    if request.form.get('hist'):
+        return redirect(url_for('history'))
 
     if valid:
         if request.form.get('all'):
@@ -193,6 +210,19 @@ def download_json():
     response.mimetype = 'text/json'
     return response
 
+
+@app.route('/history')
+def history():
+    curr.execute('SELECT * FROM IPDATA')
+    display = curr.fetchall()
+    return render_template('history.html', title='My History', display=display)
+
+
+@app.route('/clear', methods=['POST'])
+def clear():
+    curr.execute('SELECT * FROM IPDATA')
+    curr.execute('DELETE FROM IPDATA')
+    return redirect(url_for('history'))
 
 if __name__ == '__main__':
     # run the Flask App

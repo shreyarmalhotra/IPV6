@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> Call API from Button </title>
+  <style>
+    #hide {
+        display: none;
+    }
+    body {
+        background-image: url('https://wallpapercave.com/wp/STvuGy5.jpg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    input[type=submit] {
+        background-color: #3CDC8D;
+        color: white;
+    }
+  </style>
+<!--  <script src="{{url_for('static', filename='api_call.js')}}"></script>-->
+  <script src="../static/api_call.js"></script>
+</head>
+<body>
+  <input id="input" type="text">
+
+  <button id="all" onclick="call_all()">Fetch All Info</button>
+  <button id="host" onclick="call_hostname()">Fetch Hostname / IP Address</button>
+  <button id="ping" onclick="call_ping()">Fetch Pingability</button>
+  <button id="port" onclick="call_port()">Fetch Open Ports</button>
+</body>
+</html>

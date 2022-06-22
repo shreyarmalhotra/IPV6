@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> {{ kind }} </title>
+    <title> My History </title>
     <style>
         #hide {
             display: none;
@@ -18,32 +18,23 @@
             color: white;
         }
     </style>
-    <script src="/info.js"></script>
 </head>
 <body>
     <center>
         <font color="white">
+            <h1> My History </h1>
             <table border=1>
+                {% for row in display %}
                 <tr>
-                    {% for col in columns %}
-                        <th> {{ col }} </th>
-                    {% endfor %}
-                </tr>
-                {% for i in iterate %}
-                <tr>
-                    <td> {{ name[i] }} </td>
-                    {% for val in value[i] %}
-                    <td> {{ val }} </td>
+                    {% for item in row %}
+                    <td> {{ item }} </td>
                     {% endfor %}
                 </tr>
                 {% endfor %}
             </table>
 
-            <form action = "/receiver" method = "POST">
-                <p id="hide"><input type = "hidden" name = "values" /> {{ value }} </p>
-
-                <p><input type = "submit" name = "csv" value = "Download csv" /></p>
-                <p><input type = "submit" name = "json" value = "Download json" /></p>
+            <form action = "/clear" method = "POST">
+                <p><input type = "submit" name = "clear" value = "Clear History" /></p>
             </form>
 
                 <br>
