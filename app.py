@@ -45,6 +45,7 @@ def success(name):
     print("chec3")
     return render_template('info.html', name=name, value=value, kind=kind, iterate=range(len(name)), columns=columns)
 
+#test
 
 @app.route('/ip_address_and_hostname/<name>')
 def address(name):
